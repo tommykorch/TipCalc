@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
@@ -97,7 +98,9 @@ fun DemoSlider(sliderPosition: Float, onPositionChange: (Float) -> Unit) {
 }
 @Composable
 fun DemoScreen(modifier: Modifier = Modifier) {
-    var sliderPosition by remember { mutableFloatStateOf(0f) }
+    var sliderPosition by remember { mutableFloatStateOf(0f)
+    }
+    var selectedOption by remember { mutableStateOf("5%") }
     val handlePositionChange = { position: Float ->
         sliderPosition = position
     }
@@ -148,6 +151,40 @@ fun DemoScreen(modifier: Modifier = Modifier) {
                 style = MaterialTheme.typography.headlineMedium,
                 text = "25"
             )
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding()
+        ) {
+            Text(
+                style = MaterialTheme.typography.headlineSmall,
+                text = "Скидка:"
+            )
+
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.weight(1f)
+                    .padding(top = 30.dp),
+            ) {
+                listOf("3%", "5%", "7%", "10%").forEach { option ->
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        RadioButton(
+
+                            selected = selectedOption == option,
+                            onClick = { selectedOption = option }
+                        )
+                        Text(
+                            text = option,
+                            modifier = Modifier.padding(top = 2.dp),
+                            fontSize = 20.sp
+                        )
+                    }
+                }
+            }
         }
 
     }
