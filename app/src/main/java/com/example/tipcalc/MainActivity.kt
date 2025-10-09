@@ -6,21 +6,28 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -46,7 +53,27 @@ fun DemoText(message: String, fontSize: Float) {
     Text(
         text = message,
         fontSize = fontSize.sp,
-        fontWeight = FontWeight.Bold
+        fontWeight = FontWeight.Bold,
+
+    )
+}
+@Composable
+fun TextFieldDemo() {
+    var text by remember { mutableStateOf("") }
+
+    TextField(
+        value = text,
+        onValueChange = { text = it },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp),
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color(0xFFFFF0F5),
+            unfocusedContainerColor = Color(0xFFFFF0F5),
+        ),
+        placeholder = {
+            Text("Введите текст...", color = Color.Gray)
+        }
     )
 }
 @Preview(showSystemUi = true)
@@ -63,32 +90,66 @@ fun DemoTextPreview() {
 fun DemoSlider(sliderPosition: Float, onPositionChange: (Float) -> Unit) {
     Slider(
         modifier = Modifier.padding(10.dp),
-        valueRange = 20f..38f,
+        valueRange = 0f..25f,
         value = sliderPosition,
         onValueChange = { onPositionChange(it) }
     )
 }
 @Composable
 fun DemoScreen(modifier: Modifier = Modifier) {
-    var sliderPosition by remember { mutableFloatStateOf(20f) }
+    var sliderPosition by remember { mutableFloatStateOf(0f) }
     val handlePositionChange = { position: Float ->
         sliderPosition = position
     }
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.fillMaxSize()
-    ) {
-        DemoText(message = "Welcome to Compose", fontSize = sliderPosition)
-        Spacer(modifier = Modifier.height(150.dp))
+        horizontalAlignment = Alignment.Start,
+        verticalArrangement = Arrangement.Top,
+        modifier = Modifier.fillMaxSize().padding(top = 25.dp,start=10.dp)
+    )
+    {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(all=5.dp)
+
+        ) {
+            DemoText(message = "Сумма заказа:", fontSize = 20f)
+            TextFieldDemo()
+
+        }
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(all=5.dp)
+
+        ) {
+            DemoText(message = "Количество блюд:", fontSize = 20f)
+            TextFieldDemo()
+
+        }
+
+        Spacer(modifier = Modifier.height(50.dp))
+        DemoText(message = "Чаевые:", fontSize = 20f)
         DemoSlider(
             sliderPosition = sliderPosition,
             onPositionChange = handlePositionChange
         )
-        Text(
-            style = MaterialTheme.typography.headlineMedium,
-            text = sliderPosition.toInt().toString() + "sp"
-        )
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(all=15.dp)
+
+        ) {
+            Text(
+                style = MaterialTheme.typography.headlineMedium,
+                text = sliderPosition.toInt().toString()
+            )
+            Text(
+                style = MaterialTheme.typography.headlineMedium,
+                text = "25"
+            )
+        }
+
     }
 }
 
