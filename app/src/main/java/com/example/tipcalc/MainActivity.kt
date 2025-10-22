@@ -59,12 +59,14 @@ fun DemoText(message: String, fontSize: Float) {
     )
 }
 @Composable
-fun TextFieldDemo() {
-    var text by remember { mutableStateOf("") }
-
+fun NumberTextField(value: String, onValueChange: (String) -> Unit, placeholder: String) {
     TextField(
-        value = text,
-        onValueChange = { text = it },
+        value = value,
+        onValueChange = { newValue ->
+            if (newValue.all { it.isDigit() } || newValue.isEmpty()) {
+                onValueChange(newValue)
+            }
+        },
         modifier = Modifier
             .fillMaxWidth()
             .padding(5.dp),
@@ -73,7 +75,7 @@ fun TextFieldDemo() {
             unfocusedContainerColor = Color(0xFFFFF0F5),
         ),
         placeholder = {
-            Text("Введите текст...", color = Color.Gray)
+            Text(placeholder, color = Color.Gray)
         }
     )
 }
@@ -104,6 +106,24 @@ fun DemoScreen(modifier: Modifier = Modifier) {
     val handlePositionChange = { position: Float ->
         sliderPosition = position
     }
+    var orderAmount by remember { mutableStateOf("") }
+    var dishCount by remember { mutableStateOf("") }
+
+    val discountPercentage = remember(dishCount) {
+        when {
+            dishCount.isEmpty() -> 0
+            (dishCount.toIntOrNull() ?: 0) <= 2 -> 3
+            (dishCount.toIntOrNull() ?: 0) <= 5 -> 5
+            (dishCount.toIntOrNull() ?: 0) <= 10 -> 7
+            else -> 10
+        }
+    }
+    val totalAmount = remember(orderAmount, sliderPosition, discountPercentage) {
+        val amount = orderAmount.toDoubleOrNull() ?: 0.0
+        val tip = amount * (sliderPosition / 100)
+        val discount = amount * (discountPercentage / 100.0)
+        amount + tip - discount
+    }
     Column(
         horizontalAlignment = Alignment.Start,
         verticalArrangement = Arrangement.Top,
@@ -117,7 +137,11 @@ fun DemoScreen(modifier: Modifier = Modifier) {
 
         ) {
             DemoText(message = "Сумма заказа:", fontSize = 20f)
-            TextFieldDemo()
+            NumberTextField(
+                value = orderAmount,
+                onValueChange = { orderAmount = it },
+                placeholder = "Введите сумму..."
+            )
 
         }
         Row(
@@ -127,7 +151,11 @@ fun DemoScreen(modifier: Modifier = Modifier) {
 
         ) {
             DemoText(message = "Количество блюд:", fontSize = 20f)
-            TextFieldDemo()
+            NumberTextField(
+                value = dishCount,
+                onValueChange = { dishCount = it },
+                placeholder = "Введите количество..."
+            )
 
         }
 
@@ -135,7 +163,7 @@ fun DemoScreen(modifier: Modifier = Modifier) {
         DemoText(message = "Чаевые:", fontSize = 20f)
         DemoSlider(
             sliderPosition = sliderPosition,
-            onPositionChange = handlePositionChange
+            onPositionChange = { sliderPosition = it }
         )
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -173,9 +201,8 @@ fun DemoScreen(modifier: Modifier = Modifier) {
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         RadioButton(
-
-                            selected = selectedOption == option,
-                            onClick = { selectedOption = option }
+                            selected = discountPercentage.toString() == option.removeSuffix("%"),
+                            onClick = {}
                         )
                         Text(
                             text = option,
