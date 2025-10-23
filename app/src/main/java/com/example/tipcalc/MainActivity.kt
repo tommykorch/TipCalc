@@ -102,7 +102,7 @@ fun DemoSlider(sliderPosition: Float, onPositionChange: (Float) -> Unit) {
 fun DemoScreen(modifier: Modifier = Modifier) {
     var sliderPosition by remember { mutableFloatStateOf(0f)
     }
-    var selectedOption by remember { mutableStateOf("5%") }
+    //var selectedOption by remember { mutableStateOf("5%") }
     val handlePositionChange = { position: Float ->
         sliderPosition = position
     }
@@ -173,11 +173,11 @@ fun DemoScreen(modifier: Modifier = Modifier) {
         ) {
             Text(
                 style = MaterialTheme.typography.headlineMedium,
-                text = sliderPosition.toInt().toString()
+                text = sliderPosition.toInt().toString()+"%"
             )
             Text(
                 style = MaterialTheme.typography.headlineMedium,
-                text = "25"
+                text = "25%"
             )
         }
         Row(
@@ -212,6 +212,22 @@ fun DemoScreen(modifier: Modifier = Modifier) {
                     }
                 }
             }
+        }
+        Spacer(modifier = Modifier.height(30.dp))
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 15.dp)
+        ) {
+            Text(
+                style = MaterialTheme.typography.headlineSmall,
+                text = "Итого:"
+            )
+            Text(
+                style = MaterialTheme.typography.headlineMedium,
+                text = "%.2f".format(totalAmount),
+                color = Color.Red
+            )
         }
 
     }
